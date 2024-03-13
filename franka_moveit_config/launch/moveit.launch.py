@@ -82,9 +82,30 @@ def generate_launch_description():
         'franka_moveit_config', 'config/kinematics.yaml'
     )
 
+    # # Planning Functionality
+    # ompl_planning_pipeline_config = {
+    #     'ompl': {
+    #         'planning_plugin': 'ompl_interface/OMPLPlanner',
+    #         'request_adapters': 'default_planner_request_adapters/AddTimeOptimalParameterization '
+    #                             'default_planner_request_adapters/ResolveConstraintFrames '
+    #                             'default_planner_request_adapters/FixWorkspaceBounds '
+    #                             'default_planner_request_adapters/FixStartStateBounds '
+    #                             'default_planner_request_adapters/FixStartStateCollision '
+    #                             'default_planner_request_adapters/FixStartStatePathConstraints',
+    #         'start_state_max_bounds_error': 0.1,
+    #     }
+    # }
+    # ompl_planning_yaml = load_yaml(
+    #     'franka_moveit_config', 'config/ompl_planning.yaml'
+    # )
+    # ompl_planning_pipeline_config['ompl'].update(ompl_planning_yaml)
+
+
     # Planning Functionality
     ompl_planning_pipeline_config = {
-        'move_group': {
+        "default_planning_pipeline": "ompl",
+        "planning_pipelines": ["ompl", "pilz_industrial_motion_planner"],
+        'ompl': {
             'planning_plugin': 'ompl_interface/OMPLPlanner',
             'request_adapters': 'default_planner_request_adapters/AddTimeOptimalParameterization '
                                 'default_planner_request_adapters/ResolveConstraintFrames '
@@ -93,12 +114,45 @@ def generate_launch_description():
                                 'default_planner_request_adapters/FixStartStateCollision '
                                 'default_planner_request_adapters/FixStartStatePathConstraints',
             'start_state_max_bounds_error': 0.1,
-        }
+        },
+        "pilz_industrial_motion_planner": {
+            "planning_plugin": "pilz_industrial_motion_planner/CommandPlanner",
+            "request_adapters": "",
+            "start_state_max_bounds_error": 0.1,
+        },
     }
     ompl_planning_yaml = load_yaml(
         'franka_moveit_config', 'config/ompl_planning.yaml'
     )
-    ompl_planning_pipeline_config['move_group'].update(ompl_planning_yaml)
+    ompl_planning_pipeline_config['ompl'].update(ompl_planning_yaml)
+
+    
+
+    pilz_planning_yaml = load_yaml(
+        "franka_moveit_config", "config/pilz_industrial_motion_planner_planning.yaml"
+    )
+    joint_limit_yaml = load_yaml(
+        "franka_moveit_config", "config/pilz_industrial_motion_planner_planning.yaml"
+    )
+    pilz_cartesian_yaml = load_yaml(
+        "franka_moveit_config", "config/pilz_industrial_motion_planner_planning.yaml"
+    )
+
+    joint_limits_yaml = load_yaml(
+        "franka_moveit_config", "config/joint_limits.yaml"
+    )
+    pilz_cartesian_limits_yaml = load_yaml(
+        "franka_moveit_config", "config/pilz_cartesian_limits.yaml"
+    )
+    robot_description_planning = {
+        "robot_description_planning": {
+            **joint_limits_yaml,
+            **pilz_cartesian_limits_yaml,
+        }
+    }
+
+    ompl_planning_pipeline_config["pilz_industrial_motion_planner"].update(pilz_planning_yaml)
+    
 
     # Trajectory Execution Functionality
     moveit_simple_controllers_yaml = load_yaml(
@@ -137,6 +191,7 @@ def generate_launch_description():
             trajectory_execution,
             moveit_controllers,
             planning_scene_monitor_parameters,
+            robot_description_planning,
         ],
     )
 
