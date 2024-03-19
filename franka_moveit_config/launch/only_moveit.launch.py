@@ -82,10 +82,6 @@ def generate_launch_description():
         'franka_moveit_config', 'config/kinematics.yaml'
     )
 
-    camera_sensor = load_yaml(
-        'franka_moveit_config', 'config/sensors_depthmap.yaml'
-    )
-
     # # Planning Functionality
     # ompl_planning_pipeline_config = {
     #     'ompl': {
@@ -159,9 +155,13 @@ def generate_launch_description():
     
 
     # Trajectory Execution Functionality
+    # moveit_simple_controllers_yaml = load_yaml(
+    #     'franka_moveit_config', 'config/panda_controllers.yaml'
+    # )
     moveit_simple_controllers_yaml = load_yaml(
-        'franka_moveit_config', 'config/panda_controllers.yaml'
+        'franka_bringup', 'config/controllers.yaml'
     )
+
     moveit_controllers = {
         'moveit_simple_controller_manager': moveit_simple_controllers_yaml,
         'moveit_controller_manager': 'moveit_simple_controller_manager'
@@ -196,7 +196,6 @@ def generate_launch_description():
             moveit_controllers,
             planning_scene_monitor_parameters,
             robot_description_planning,
-            camera_sensor,
         ],
     )
 
@@ -215,46 +214,45 @@ def generate_launch_description():
             robot_description_semantic,
             ompl_planning_pipeline_config,
             kinematics_yaml,
-            camera_sensor,
         ],
     )
 
     # Publish TF
-    robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        name='robot_state_publisher',
-        output='both',
-        parameters=[robot_description],
-    )
+    # robot_state_publisher = Node(
+    #     package='robot_state_publisher',
+    #     executable='robot_state_publisher',
+    #     name='robot_state_publisher',
+    #     output='both',
+    #     parameters=[robot_description],
+    # )
 
-    ros2_controllers_path = os.path.join(
-        get_package_share_directory('franka_moveit_config'),
-        'config',
-        'panda_ros_controllers.yaml',
-    )
-    ros2_control_node = Node(
-        package='controller_manager',
-        executable='ros2_control_node',
-        parameters=[robot_description, ros2_controllers_path],
-        remappings=[('joint_states', 'franka/joint_states')],
-        output={
-            'stdout': 'screen',
-            'stderr': 'screen',
-        },
-        on_exit=Shutdown(),
-    )
+    # ros2_controllers_path = os.path.join(
+    #     get_package_share_directory('franka_moveit_config'),
+    #     'config',
+    #     'panda_ros_controllers.yaml',
+    # )
+    # ros2_control_node = Node(
+    #     package='controller_manager',
+    #     executable='ros2_control_node',
+    #     parameters=[robot_description, ros2_controllers_path],
+    #     remappings=[('joint_states', 'franka/joint_states')],
+    #     output={
+    #         'stdout': 'screen',
+    #         'stderr': 'screen',
+    #     },
+    #     on_exit=Shutdown(),
+    # )
 
-    # Load controllers
-    load_controllers = []
-    for controller in ['panda_arm_controller', 'joint_state_broadcaster']:
-        load_controllers += [
-            ExecuteProcess(
-                cmd=['ros2 run controller_manager spawner {}'.format(controller)],
-                shell=True,
-                output='screen',
-            )
-        ]
+    # # Load controllers
+    # load_controllers = []
+    # for controller in ['panda_arm_controller', 'joint_state_broadcaster']:
+    #     load_controllers += [
+    #         ExecuteProcess(
+    #             cmd=['ros2 run controller_manager spawner {}'.format(controller)],
+    #             shell=True,
+    #             output='screen',
+    #         )
+    #     ]
 
     # Warehouse mongodb server
     db_config = LaunchConfiguration('db')
@@ -270,16 +268,15 @@ def generate_launch_description():
         condition=IfCondition(db_config)
     )
 
-    joint_state_publisher = Node(
-        package='joint_state_publisher',
-        executable='joint_state_publisher',
-        name='joint_state_publisher',
-        parameters=[
-            {'source_list': ['franka/joint_states', 'panda_gripper/joint_states'], 'rate': 30}],
-    )
+    # joint_state_publisher = Node(
+    #     package='joint_state_publisher',
+    #     executable='joint_state_publisher',
+    #     name='joint_state_publisher',
+    #     parameters=[
+    #         {'source_list': ['franka/joint_states', 'panda_gripper/joint_states'], 'rate': 30}],
+    # )
     robot_arg = DeclareLaunchArgument(
         robot_ip_parameter_name,
-        default_value='192.168.2.30',
         description='Hostname or IP address of the robot.')
 
     use_fake_hardware_arg = DeclareLaunchArgument(
@@ -288,7 +285,7 @@ def generate_launch_description():
         description='Use fake hardware')
     load_gripper_arg = DeclareLaunchArgument(
             load_gripper_parameter_name,
-            default_value='true',
+            default_value='false',
             description='Use Franka Gripper as an end-effector, otherwise, the robot is loaded '
                         'without an end-effector.')
     
@@ -311,12 +308,12 @@ def generate_launch_description():
          load_gripper_arg,
          db_arg,
          rviz_node,
-         robot_state_publisher,
+        #  robot_state_publisher,
          run_move_group_node,
-         ros2_control_node,
+        #  ros2_control_node,
          mongodb_server_node,
-         joint_state_publisher,
+        #  joint_state_publisher,
          gripper_launch_file
          ]
-        + load_controllers
+        # + load_controllers
     )
