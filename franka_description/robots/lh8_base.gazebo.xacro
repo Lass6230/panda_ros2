@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- ========= -->
+    <!-- Arguments -->
+    <!-- ========= -->
+    <xacro:arg name="visualize_imu" default="true"/>
+
+    <!-- =============== -->
+    <!-- Base link color -->
+    <!-- =============== -->
+    <gazebo reference="lh8_base_link">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <!-- =============================== -->
+    <!-- Omni wheels colors and settings -->
+    <!-- =============================== -->
+    <gazebo reference="lh8_front_right_wheel_link">
+        <!-- <mu1>0.1</mu1>
+        <mu2>0.1</mu2>
+        <kp>500000.0</kp>
+        <kd>10.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>0.1</maxVel>
+        <fdir1>1 0 0</fdir1> -->
+        <material>Gazebo/FlatBlack</material>
+    </gazebo>
+
+    <gazebo reference="lh8_front_left_wheel_link">
+        <!-- <mu1>0.1</mu1>
+        <mu2>0.1</mu2>
+        <kp>500000.0</kp>
+        <kd>10.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>0.1</maxVel>
+        <fdir1>1 0 0</fdir1> -->
+        <material>Gazebo/FlatBlack</material>
+    </gazebo>
+
+    <gazebo reference="lh8_back_left_wheel_link">
+        <!-- <mu1>0.1</mu1>
+        <mu2>0.1</mu2>
+        <kp>500000.0</kp>
+        <kd>10.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>0.1</maxVel>
+        <fdir1>1 0 0</fdir1> -->
+        <material>Gazebo/FlatBlack</material>
+    </gazebo>
+
+    <gazebo reference="lh8_back_right_wheel_link">
+        <!-- <mu1>0.1</mu1>
+        <mu2>0.1</mu2>
+        <kp>500000.0</kp>
+        <kd>10.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>0.1</maxVel>
+        <fdir1>1 0 0</fdir1> -->
+        <material>Gazebo/FlatBlack</material>
+    </gazebo>
+
+    <!-- ============ -->
+    <!-- Lidar colors -->
+    <!-- ============ -->
+    <gazebo reference="front_left_laser_link">
+        <material>Gazebo/FlatBlack</material>
+    </gazebo>
+
+    <gazebo reference="back_right_laser_link">
+        <material>Gazebo/FlatBlack</material>
+    </gazebo>
+
+    <!-- ================================ -->
+    <!-- Omni Steering planar move plugin -->
+    <!-- ================================ -->
+    <xacro:macro name="omni_steering" params="">
+        <gazebo>
+            <plugin name="omni_steering" filename="libgazebo_ros_planar_move.so">
+                <commandTopic>cmd_vel</commandTopic>
+                <odometryTopic>odom</odometryTopic>
+                <odometryFrame>odom</odometryFrame>
+                <odometryRate>100.0</odometryRate>
+                <robotBaseFrame>lh8_base_footprint</robotBaseFrame>
+                <publishTF>true</publishTF>
+            </plugin>
+        </gazebo>
+    </xacro:macro>
+
+    <!-- ========== -->
+    <!-- IMU plugin -->
+    <!-- ========== -->
+    <gazebo reference="imu_link">
+        <sensor type="imu" name="imu">
+            <always_on>true</always_on>
+            <visualize>$(arg visualize_imu)</visualize>
+        </sensor>
+        <material>Gazebo/FlatBlack</material>
+    </gazebo>
+
+    <gazebo>
+        <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
+            <alwaysOn>true</alwaysOn>
+            <bodyName>imu_link</bodyName>
+            <frameName>imu_link</frameName>
+            <topicName>imu</topicName>
+            <serviceName>imu_service</serviceName>
+            <gaussianNoise>0.0</gaussianNoise>
+            <updateRate>100</updateRate>
+            <imu>
+                <noise>
+                    <type>gaussian</type>
+                    <rate>
+                        <mean>0.0</mean>
+                        <stddev>2e-4</stddev>
+                        <bias_mean>0.0000075</bias_mean>
+                        <bias_stddev>0.0000008</bias_stddev>
+                    </rate>
+                    <accel>
+                        <mean>0.0</mean>
+                        <stddev>1.7e-2</stddev>
+                        <bias_mean>0.1</bias_mean>
+                        <bias_stddev>0.001</bias_stddev>
+                    </accel>
+                </noise>
+            </imu>
+        </plugin>
+    </gazebo>
+
+</robot>

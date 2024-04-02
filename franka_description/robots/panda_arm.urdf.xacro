@@ -17,6 +17,7 @@
   <xacro:panda_arm_ros2_control ns="$(arg arm_id)" robot_ip="$(arg robot_ip)" use_fake_hardware="$(arg use_fake_hardware)" fake_sensor_commands="$(arg fake_sensor_commands)"/>
 
 
+
   <xacro:property name="M_PI"              value="3.1415926535897931"/>
 	<xacro:arg      name="camera_pose_trans" default="0.02 0.0 0.055"/>
 	<xacro:arg      name="camera_pose_rot"   default="${M_PI} ${-M_PI/2.0} 0.0"/>
@@ -24,4 +25,52 @@
 		<xacro:sensor_d435 name="camera" topics_ns="camera/" parent="panda_hand" publish_pointcloud="true">
 			<origin xyz="$(arg camera_pose_trans)" rpy="$(arg camera_pose_rot)" />
 		</xacro:sensor_d435>  
+  
+  <link name="base_plate_link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="10.671" />
+      <inertia
+        ixx="0.099298"
+        ixy="-9.8583E-09"
+        ixz="-5.0395E-05"
+        iyy="0.13796"
+        iyz="-4.0684E-09"
+        izz="0.080836" />
+    </inertial>
+
+    <visual>
+       <!-- <origin xyz="0.57 -0.056 -0.13" rpy="0 0 1.57" /> -->
+       <origin xyz="-0.475 -0.115 0.03 " rpy="0 0 1.57" />
+       <!-- <origin xyz="-0.475 -0.115 0.065 " rpy="0 0 1.57" /> -->
+       <geometry>
+	     <mesh filename="package://franka_description/meshes/visual/base_with_top.STL"/>
+       </geometry>
+
+       <material name="darkgrey">
+         <color rgba="0.75294 0.75294 0.75294 1"/>
+       </material>
+
+    </visual>
+
+    <collision>
+       <!-- <origin xyz="0.57 -0.056 -0.13" rpy="0 0 1.57 " /> -->
+       <origin xyz="-0.475 -0.115 0.03 " rpy="0 0 1.57" />
+       <geometry>
+         <mesh filename="package://franka_description/meshes/visual/base_with_top.STL"/>
+       </geometry>
+    </collision>
+
+  </link>
+
+  <joint name="base_plate_joint" type="fixed">
+    <parent link="panda_link0"/>
+    <child link="base_plate_link"/>
+    <origin xyz="0.0 0.0 -0.8" rpy="0 0 0"/>
+  </joint>
+
+  
 </robot>
