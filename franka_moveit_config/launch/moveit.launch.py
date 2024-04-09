@@ -86,6 +86,10 @@ def generate_launch_description():
         'franka_moveit_config', 'config/sensors_depthmap.yaml'
     )
 
+    octomap_config = {'octomap_frame': 'camera_link', 
+                  'octomap_resolution': 0.02,
+                  'max_range': 2.0}
+
     # # Planning Functionality
     # ompl_planning_pipeline_config = {
     #     'ompl': {
@@ -197,6 +201,7 @@ def generate_launch_description():
             planning_scene_monitor_parameters,
             robot_description_planning,
             camera_sensor,
+            octomap_config,
         ],
     )
 
@@ -216,6 +221,7 @@ def generate_launch_description():
             ompl_planning_pipeline_config,
             kinematics_yaml,
             camera_sensor,
+            octomap_config,
         ],
     )
 

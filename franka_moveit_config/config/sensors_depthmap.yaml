@@ -16,9 +16,9 @@ sensor2:
     image_topic: /camera/aligned_depth_to_color/image_raw
     queue_size: 5
     near_clipping_plane_distance: 0.3
-    far_clipping_plane_distance: 3.0
+    far_clipping_plane_distance: 1.2
     shadow_threshold: 0.2
-    padding_scale: 1.0
+    padding_scale: 4.0
     padding_offset: 0.03
     max_update_rate: 1.0
     skip_vertical_pixels: 4
