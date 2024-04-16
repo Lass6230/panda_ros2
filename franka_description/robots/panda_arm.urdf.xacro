@@ -19,10 +19,11 @@
 
 
   <xacro:property name="M_PI"              value="3.1415926535897931"/>
-	<xacro:arg      name="camera_pose_trans" default="0.02 0.0 0.055"/>
+	<xacro:arg      name="camera_pose_trans" default="0.02 0.015 0.055"/>
 	<xacro:arg      name="camera_pose_rot"   default="${M_PI} ${-M_PI/2.0} 0.0"/>
-    <xacro:include filename="$(find franka_description)/camera/_d435.urdf.xacro" />
-		<xacro:sensor_d435 name="camera" topics_ns="camera/" parent="panda_hand" publish_pointcloud="true">
+
+    <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />		
+    <xacro:sensor_d435 name="camera" parent="panda_hand">
 			<origin xyz="$(arg camera_pose_trans)" rpy="$(arg camera_pose_rot)" />
 		</xacro:sensor_d435>  
   
