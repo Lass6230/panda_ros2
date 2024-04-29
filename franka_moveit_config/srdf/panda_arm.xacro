@@ -32,5 +32,6 @@
     <disable_collisions link1="${arm_id}_link7" link2="${arm_id}_link8" reason="Adjacent"/>
     <disable_collisions link1="${arm_id}_link0" link2="base_plate_link" reason="Never"/>
     <disable_collisions link1="${arm_id}_link1" link2="base_plate_link" reason="Never"/>
+    <!-- <disable_collisions link1="${arm_id}_link1" link2="octomap" reason="Default"/> -->
   </xacro:macro>
 </robot>

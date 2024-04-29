@@ -31,6 +31,12 @@ planner_configs:
   RRTConnectkConfigDefault:
     type: geometric::RRTConnect
     range: 0.0  # Max motion added to tree. ==> maxDistance_ default: 0.0, if 0.0, set on setup()
+  # RRTstarkConfigDefault:
+  #   type: geometric::RRTstar
+  #   optimization_objective: MaximizeMinClearanceObjective
+  #   range: 0.0
+  #   goal_bias: 0.05
+  #   delay_collision_checking: 1
   RRTstarkConfigDefault:
     type: geometric::RRTstar
     range: 0.0  # Max motion added to tree. ==> maxDistance_ default: 0.0, if 0.0, set on setup()
